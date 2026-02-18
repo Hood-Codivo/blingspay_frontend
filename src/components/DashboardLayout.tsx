@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { title: "Overview", url: "/", icon: LayoutDashboard },
+  { title: "Overview", url: "/dashboard", icon: LayoutDashboard },
   { title: "Payments", url: "/payments", icon: CreditCard },
   { title: "API Keys", url: "/api-keys", icon: Key },
   { title: "Webhooks", url: "/webhooks", icon: Webhook },
@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <NavLink
               key={item.url}
               to={item.url}
-              end={item.url === "/"}
+              end={item.url === "/dashboard"}
               className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               activeClassName="bg-sidebar-accent text-primary font-medium"
               onClick={() => setSidebarOpen(false)}
