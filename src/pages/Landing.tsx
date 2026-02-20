@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import HeroParticles from "@/components/HeroParticles";
 import {
   Zap,
   ArrowRight,
@@ -78,15 +79,8 @@ export default function Landing() {
         />
       ))}
 
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(hsl(220, 14%, 14%)33 1px, transparent 1px), linear-gradient(90deg, hsl(220, 14%, 14%)33 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-          maskImage: "radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 100%)",
-        }}
-      />
+      {/* Solana particle canvas */}
+      <HeroParticles />
 
       {/* Navigation */}
       <motion.nav

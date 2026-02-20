@@ -2,13 +2,15 @@ import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatsCard from "@/components/StatsCard";
 import CheckoutModal from "@/components/CheckoutModal";
+import WithdrawModal from "@/components/WithdrawModal";
 import { merchantStats, revenueData, mockPayments } from "@/lib/mock-data";
-import { DollarSign, TrendingUp, CreditCard, Percent, Eye } from "lucide-react";
+import { DollarSign, TrendingUp, CreditCard, Percent, Eye, ArrowDownToLine, Vault } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function Dashboard() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
 
   return (
     <DashboardLayout>
@@ -18,9 +20,38 @@ export default function Dashboard() {
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
             <p className="text-sm text-muted-foreground">Your payment overview at a glance.</p>
           </div>
-          <Button onClick={() => setCheckoutOpen(true)} className="gap-2">
-            <Eye className="h-4 w-4" /> Preview Checkout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setWithdrawOpen(true)} className="gap-2">
+              <ArrowDownToLine className="h-4 w-4" /> Withdraw
+            </Button>
+            <Button onClick={() => setCheckoutOpen(true)} className="gap-2">
+              <Eye className="h-4 w-4" /> Preview Checkout
+            </Button>
+          </div>
+        </div>
+
+        {/* Vault Balance Card */}
+        <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 animate-slide-up">
+          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Vault Balance</p>
+              <p className="text-4xl font-extrabold text-foreground tracking-tight">
+                ${merchantStats.vaultBalance.toLocaleString()}
+              </p>
+              <p className="mt-1 text-xs text-warning">
+                ${merchantStats.pendingWithdrawals.toLocaleString()} pending withdrawal
+              </p>
+            </div>
+            <Button
+              size="lg"
+              onClick={() => setWithdrawOpen(true)}
+              className="gap-2 glow-primary self-start sm:self-center"
+            >
+              <ArrowDownToLine className="h-5 w-5" />
+              Withdraw Funds
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -102,6 +133,7 @@ export default function Dashboard() {
       </div>
 
       <CheckoutModal open={checkoutOpen} onOpenChange={setCheckoutOpen} />
+      <WithdrawModal open={withdrawOpen} onOpenChange={setWithdrawOpen} />
     </DashboardLayout>
   );
 }
