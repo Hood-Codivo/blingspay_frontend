@@ -14,28 +14,79 @@ import Onboarding from "./pages/Onboarding";
 import CheckoutPreview from "./pages/CheckoutPreview";
 import NotFound from "./pages/NotFound";
 
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
+import {
+  WalletModalProvider,
+  WalletMultiButton,
+} from "@solana/wallet-adapter-react-ui";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+
+import "@solana/wallet-adapter-react-ui/styles.css";
+import Navbar from "./components/Navbar";
+
+import { MerchantProvider } from "./contexts/MerchantContext";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useEffect } from "react";
+
 const queryClient = new QueryClient();
+const endpoint = "https://api.devnet.solana.com";
+const wallets = [new PhantomWalletAdapter()];
+
+declare global {
+  interface Window {
+    __walletAddress: string | null;
+  }
+}
+
+function WalletSync() {
+  const { publicKey } = useWallet();
+
+  useEffect(() => {
+    if (publicKey) {
+      window.__walletAddress = publicKey.toBase58();
+    } else {
+      window.__walletAddress = null;
+    }
+  }, [publicKey]);
+
+  return null;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Index />} />
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/api-keys" element={<ApiKeys />} />
-          <Route path="/webhooks" element={<Webhooks />} />
-          <Route path="/pos" element={<PosPage />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/checkout-preview" element={<CheckoutPreview />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <WalletSync />
+            <BrowserRouter>
+              <MerchantProvider>
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/dashboard" element={<Index />} />
+                  <Route path="/payments" element={<Payments />} />
+                  <Route path="/api-keys" element={<ApiKeys />} />
+                  <Route path="/webhooks" element={<Webhooks />} />
+                  <Route path="/pos" element={<PosPage />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/onboarding" element={<Onboarding />} />
+                  <Route
+                    path="/checkout-preview"
+                    element={<CheckoutPreview />}
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </MerchantProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   </QueryClientProvider>
 );
 

@@ -11,6 +11,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const navItems = [
   { title: "Overview", url: "/dashboard", icon: LayoutDashboard },
@@ -44,9 +45,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Zap className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-bold text-foreground tracking-tight">
-            Vault<span className="text-primary">Pay</span>
-          </span>
+          <Link to="/">
+            <span className="text-lg font-bold text-foreground tracking-tight c">
+              Blings<span className="text-primary">Pay</span>
+            </span>
+          </Link>
           <button
             onClick={() => setSidebarOpen(false)}
             className="ml-auto text-muted-foreground lg:hidden"
@@ -74,10 +77,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="border-t border-border p-4">
           <div className="glass-card rounded-lg p-3">
             <p className="text-xs text-muted-foreground">Vault Balance</p>
-            <p className="text-lg font-semibold text-foreground">$12,480.00</p>
+            <p className="text-lg font-semibold text-foreground"></p>
             <div className="mt-1 flex items-center gap-1">
               <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse-glow" />
-              <span className="text-xs text-primary">Mainnet</span>
+              <span className="text-xs text-primary">Devnet</span>
             </div>
           </div>
         </div>

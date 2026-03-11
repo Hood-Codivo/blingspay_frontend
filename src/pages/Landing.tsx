@@ -14,6 +14,8 @@ import {
   Wallet,
   Check,
 } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import Navbar from "@/components/Navbar";
 
 const floatingOrbs = [
   { size: 300, x: "10%", y: "20%", color: "hsl(160, 84%, 39%)", delay: 0 },
@@ -24,12 +26,36 @@ const floatingOrbs = [
 ];
 
 const features = [
-  { icon: Shield, title: "Non-Custodial", desc: "Funds go directly to your vault. No middlemen. No trust required." },
-  { icon: Globe, title: "Global Payments", desc: "Accept crypto from anyone, anywhere. No borders, no limits." },
-  { icon: BarChart3, title: "Real-Time Analytics", desc: "Track revenue, fees, and transactions with a live dashboard." },
-  { icon: Code2, title: "Developer First", desc: "Drop-in React component or simple script tag. Integrate in minutes." },
-  { icon: CreditCard, title: "Multi-Token", desc: "Accept SOL, USDC, USDT with automatic token detection." },
-  { icon: Wallet, title: "Instant Settlement", desc: "No holding periods. Withdraw to your wallet whenever you want." },
+  {
+    icon: Shield,
+    title: "Non-Custodial",
+    desc: "Funds go directly to your vault. No middlemen. No trust required.",
+  },
+  {
+    icon: Globe,
+    title: "Global Payments",
+    desc: "Accept crypto from anyone, anywhere. No borders, no limits.",
+  },
+  {
+    icon: BarChart3,
+    title: "Real-Time Analytics",
+    desc: "Track revenue, fees, and transactions with a live dashboard.",
+  },
+  {
+    icon: Code2,
+    title: "Developer First",
+    desc: "Drop-in React component or simple script tag. Integrate in minutes.",
+  },
+  {
+    icon: CreditCard,
+    title: "Multi-Token",
+    desc: "Accept SOL, USDC, USDT with automatic token detection.",
+  },
+  {
+    icon: Wallet,
+    title: "Instant Settlement",
+    desc: "No holding periods. Withdraw to your wallet whenever you want.",
+  },
 ];
 
 const stats = [
@@ -44,11 +70,16 @@ export default function Landing() {
 
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
+      setMousePos({
+        x: e.clientX / window.innerWidth,
+        y: e.clientY / window.innerHeight,
+      });
     };
     window.addEventListener("mousemove", handleMove);
     return () => window.removeEventListener("mousemove", handleMove);
   }, []);
+
+  const { publicKey } = useWallet();
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
@@ -81,32 +112,7 @@ export default function Landing() {
 
       {/* Solana particle canvas */}
       <HeroParticles />
-
-      {/* Navigation */}
-      <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 flex items-center justify-between px-6 py-5 lg:px-16"
-      >
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-            <Zap className="h-4 w-4 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold text-foreground tracking-tight">
-            Vault<span className="text-primary">Pay</span>
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link to="/dashboard">
-            <Button variant="ghost" size="sm">Dashboard</Button>
-          </Link>
-          <Link to="/onboarding">
-            <Button size="sm" className="gap-2">
-              Get Started <ArrowRight className="h-3.5 w-3.5" />
-            </Button>
-          </Link>
-        </div>
-      </motion.nav>
+      <Navbar />
 
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center px-6 pt-20 pb-28 text-center lg:pt-32">
@@ -118,7 +124,7 @@ export default function Landing() {
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            Built on Solana · Sub-second finality
+            Built on the Blockchain
           </span>
         </motion.div>
 
@@ -128,8 +134,7 @@ export default function Landing() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="max-w-4xl text-5xl font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
         >
-          Accept Crypto{" "}
-          <span className="gradient-text">Payments</span>
+          Accept Crypto <span className="gradient-text">Payments</span>
           <br />
           Like It's Stripe
         </motion.h1>
@@ -140,8 +145,9 @@ export default function Landing() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed"
         >
-          A plug-and-play checkout for Solana. Drop in a component, accept SOL & stablecoins,
-          and get instant settlement — no blockchain knowledge required.
+          A plug-and-play checkout for Solana. Drop in a component, accept SOL &
+          stablecoins, and get instant settlement — no blockchain knowledge
+          required.
         </motion.p>
 
         <motion.div
@@ -151,12 +157,19 @@ export default function Landing() {
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
           <Link to="/onboarding">
-            <Button size="lg" className="gap-2 text-base px-8 h-12 glow-primary">
+            <Button
+              size="lg"
+              className="gap-2 text-base px-8 h-12 glow-primary"
+            >
               Start Accepting Payments <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
           <Link to="/checkout-preview">
-            <Button size="lg" variant="outline" className="gap-2 text-base px-8 h-12">
+            <Button
+              size="lg"
+              variant="outline"
+              className="gap-2 text-base px-8 h-12"
+            >
               <Code2 className="h-4 w-4" /> View Widget Demo
             </Button>
           </Link>
@@ -176,7 +189,9 @@ export default function Landing() {
             <div className="h-3 w-3 rounded-full bg-destructive/60" />
             <div className="h-3 w-3 rounded-full bg-warning/60" />
             <div className="h-3 w-3 rounded-full bg-primary/60" />
-            <span className="ml-3 text-xs text-muted-foreground font-mono">checkout.tsx</span>
+            <span className="ml-3 text-xs text-muted-foreground font-mono">
+              checkout.tsx
+            </span>
           </div>
           <pre className="text-sm font-mono leading-relaxed overflow-x-auto">
             <code>
@@ -186,7 +201,7 @@ export default function Landing() {
               <span className="text-accent">{"import "}</span>
               <span className="text-foreground">{"{ CryptoCheckout } "}</span>
               <span className="text-accent">from </span>
-              <span className="text-primary">"@vaultpay/react"</span>
+              <span className="text-primary">"@BlingsPay/react"</span>
               {"\n\n"}
               <span className="text-accent">{"<"}</span>
               <span className="text-foreground">CryptoCheckout</span>
@@ -240,10 +255,12 @@ export default function Landing() {
           className="mb-16 text-center"
         >
           <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
-            Everything you need to accept <span className="gradient-text">crypto</span>
+            Everything you need to accept{" "}
+            <span className="gradient-text">crypto</span>
           </h2>
           <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-            Built for merchants who want the power of blockchain without the complexity.
+            Built for merchants who want the power of blockchain without the
+            complexity.
           </p>
         </motion.div>
 
@@ -261,8 +278,12 @@ export default function Landing() {
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <f.icon className="h-5 w-5" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">{f.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+              <h3 className="text-lg font-semibold text-foreground">
+                {f.title}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                {f.desc}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -282,10 +303,14 @@ export default function Landing() {
             Ready to go <span className="gradient-text">trustless</span>?
           </h2>
           <p className="relative mt-4 text-muted-foreground max-w-lg mx-auto">
-            Set up your merchant vault in under 5 minutes. No blockchain expertise needed.
+            Set up your merchant vault in under 5 minutes. No blockchain
+            expertise needed.
           </p>
           <Link to="/onboarding" className="relative inline-block mt-8">
-            <Button size="lg" className="gap-2 px-10 h-12 text-base glow-primary">
+            <Button
+              size="lg"
+              className="gap-2 px-10 h-12 text-base glow-primary"
+            >
               Create Merchant Account <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -297,11 +322,15 @@ export default function Landing() {
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary" />
-            <span className="text-sm font-semibold text-foreground">
-              Vault<span className="text-primary">Pay</span>
-            </span>
+            <Link to="/">
+              <span className="text-sm font-semibold text-foreground cursor-pointer">
+                Vault<span className="text-primary">Pay</span>
+              </span>
+            </Link>
           </div>
-          <p className="text-xs text-muted-foreground">© 2026 VaultPay. Decentralized payments for everyone.</p>
+          <p className="text-xs text-muted-foreground">
+            © 2026 BlingsPay. Decentralized payments for everyone.
+          </p>
         </div>
       </footer>
     </div>

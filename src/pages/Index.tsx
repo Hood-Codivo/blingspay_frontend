@@ -1,27 +1,188 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatsCard from "@/components/StatsCard";
 import CheckoutModal from "@/components/CheckoutModal";
 import WithdrawModal from "@/components/WithdrawModal";
-import { merchantStats, revenueData, mockPayments } from "@/lib/mock-data";
-import { DollarSign, TrendingUp, CreditCard, Percent, Eye, ArrowDownToLine, Vault } from "lucide-react";
+import {
+  DollarSign,
+  TrendingUp,
+  CreditCard,
+  Percent,
+  Eye,
+  ArrowDownToLine,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import api from "@/lib/api";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { getProgram } from "@/lib/anchor";
+
+interface Payment {
+  _id: string;
+  paymentId: string;
+  amount: number;
+  token: string;
+  status: string;
+  createdAt: string;
+}
+
+interface DashboardStats {
+  vaultBalance: number;
+  pendingWithdrawals: number;
+  totalRevenue: number;
+  totalTransactions: number;
+  successRate: number;
+  totalFees: number;
+  payments: Payment[];
+}
 
 export default function Dashboard() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [liveVaultBalance, setLiveVaultBalance] = useState<number>(0);
+  const wallet = useWallet();
+
+  // ── Fetch vault balance LIVE from Solana chain ────────────────────────────
+  const fetchVaultBalance = async () => {
+    if (!wallet.publicKey) return;
+
+    try {
+      const program = getProgram(wallet);
+
+      const [merchantPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("merchant"), wallet.publicKey.toBuffer()],
+        program.programId,
+      );
+
+      const [vaultPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("vault"), merchantPda.toBuffer()],
+        program.programId,
+      );
+
+      const balance = await program.provider.connection.getBalance(vaultPda);
+      const sol = balance / LAMPORTS_PER_SOL;
+      setLiveVaultBalance(sol);
+      console.log("Live vault balance:", sol, "SOL");
+    } catch (err) {
+      console.error("Failed to fetch vault balance:", err);
+    }
+  };
+
+  // ── Fetch payment stats from backend ─────────────────────────────────────
+  const fetchDashboard = async (isRefresh = false) => {
+    if (!wallet.publicKey) return;
+    if (isRefresh) setRefreshing(true);
+
+    try {
+      const res = await api.get("/dashboard", {
+        headers: { "x-wallet-address": wallet.publicKey.toBase58() },
+      });
+      setStats(res.data);
+    } catch (err) {
+      console.error("Failed to fetch dashboard:", err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!wallet.publicKey) return;
+    fetchDashboard();
+    fetchVaultBalance();
+  }, [wallet.publicKey]);
+
+  // ── Build chart data from payments ───────────────────────────────────────
+  const buildChartData = (payments: Payment[]) => {
+    return payments.reduce(
+      (
+        acc: { date: string; sol: number; usdc: number; usdt: number }[],
+        payment,
+      ) => {
+        const date = new Date(payment.createdAt).toLocaleDateString();
+        let existing = acc.find((d) => d.date === date);
+
+        if (!existing) {
+          existing = { date, sol: 0, usdc: 0, usdt: 0 };
+          acc.push(existing);
+        }
+
+        if (payment.status === "confirmed") {
+          if (payment.token === "SOL") existing.sol += payment.amount;
+          if (payment.token === "USDC") existing.usdc += payment.amount;
+          if (payment.token === "USDT") existing.usdt += payment.amount;
+        }
+
+        return acc;
+      },
+      [],
+    );
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center p-20 text-muted-foreground">
+          Loading dashboard...
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // If backend has no data yet, still show vault balance from chain
+  const revenueData = stats ? buildChartData(stats.payments) : [];
+  const payments = stats?.payments ?? [];
+  const totalRevenue = stats?.totalRevenue ?? 0;
+  const totalTransactions = stats?.totalTransactions ?? 0;
+  const successRate = stats?.successRate ?? 0;
+  const totalFees = stats?.totalFees ?? 0;
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
+        {/* ── Header ── */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Your payment overview at a glance.</p>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p className="text-sm text-muted-foreground">
+              Your payment overview at a glance.
+            </p>
           </div>
+
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => setWithdrawOpen(true)} className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                fetchDashboard(true);
+                fetchVaultBalance();
+              }}
+              disabled={refreshing}
+              className="gap-2"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+              />
+              Refresh
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setWithdrawOpen(true)}
+              className="gap-2"
+            >
               <ArrowDownToLine className="h-4 w-4" /> Withdraw
             </Button>
             <Button onClick={() => setCheckoutOpen(true)} className="gap-2">
@@ -30,105 +191,148 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Vault Balance Card */}
-        <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 animate-slide-up">
-          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Vault Balance</p>
-              <p className="text-4xl font-extrabold text-foreground tracking-tight">
-                ${merchantStats.vaultBalance.toLocaleString()}
-              </p>
-              <p className="mt-1 text-xs text-warning">
-                ${merchantStats.pendingWithdrawals.toLocaleString()} pending withdrawal
-              </p>
-            </div>
-            <Button
-              size="lg"
-              onClick={() => setWithdrawOpen(true)}
-              className="gap-2 glow-primary self-start sm:self-center"
-            >
-              <ArrowDownToLine className="h-5 w-5" />
-              Withdraw Funds
-            </Button>
-          </div>
-        </div>
+        {/* ── Vault Balance — fetched LIVE from Solana ──
+        <div className="rounded-xl border p-6 space-y-1">
+          <p className="text-sm text-muted-foreground">Vault Balance (Live)</p>
+          <p className="text-4xl font-bold">
+            {liveVaultBalance.toFixed(6)} SOL
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Balance read directly from Solana devnet
+          </p>
+        </div> */}
 
-        {/* Stats Grid */}
+        {/* ── Stats Grid ── */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatsCard title="Total Revenue" value={`$${merchantStats.totalRevenue.toLocaleString()}`} change="+18.2% from last month" changeType="positive" icon={DollarSign} />
-          <StatsCard title="Transactions" value={merchantStats.totalTransactions.toString()} change="+42 this week" changeType="positive" icon={CreditCard} />
-          <StatsCard title="Success Rate" value={`${merchantStats.successRate}%`} change="+0.3% from last month" changeType="positive" icon={TrendingUp} />
-          <StatsCard title="Total Fees" value={`$${merchantStats.totalFees.toLocaleString()}`} change="1% platform fee" changeType="neutral" icon={Percent} />
+          <StatsCard
+            title="Total Revenue"
+            value={`${totalRevenue.toFixed(4)} SOL`}
+            change="Confirmed payments"
+            changeType="positive"
+            icon={DollarSign}
+          />
+          <StatsCard
+            title="Transactions"
+            value={totalTransactions.toString()}
+            change="All time"
+            changeType="positive"
+            icon={CreditCard}
+          />
+          <StatsCard
+            title="Success Rate"
+            value={`${successRate.toFixed(1)}%`}
+            change="Confirmed / total"
+            changeType="positive"
+            icon={TrendingUp}
+          />
+          {/* <StatsCard
+            title="Total Fees"
+            value={`${totalFees.toFixed(4)} SOL`}
+            change="1.5% platform fee"
+            changeType="neutral"
+            icon={Percent}
+          /> */}
         </div>
 
-        {/* Revenue Chart */}
-        <div className="glass-card rounded-xl p-6 animate-slide-up">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Revenue Over Time</h2>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueData}>
-                <defs>
-                  <linearGradient id="colorUsdc" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(160, 84%, 39%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(160, 84%, 39%)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorUsdt" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(174, 72%, 40%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(174, 72%, 40%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 14%)" />
-                <XAxis dataKey="date" stroke="hsl(215, 14%, 50%)" fontSize={12} />
-                <YAxis stroke="hsl(215, 14%, 50%)" fontSize={12} tickFormatter={(v) => `$${v >= 1000 ? `${v / 1000}k` : v}`} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: "hsl(220, 18%, 7%)", border: "1px solid hsl(220, 14%, 14%)", borderRadius: "8px", color: "hsl(210, 20%, 92%)" }}
-                  labelStyle={{ color: "hsl(215, 14%, 50%)" }}
-                />
-                <Area type="monotone" dataKey="usdc" stroke="hsl(160, 84%, 39%)" fill="url(#colorUsdc)" strokeWidth={2} name="USDC" />
-                <Area type="monotone" dataKey="usdt" stroke="hsl(174, 72%, 40%)" fill="url(#colorUsdt)" strokeWidth={2} name="USDT" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        {/* ── Revenue Chart ── */}
+        <div className="rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-semibold">Revenue Over Time</h2>
+
+          {revenueData.length === 0 ? (
+            <div className="h-72 flex items-center justify-center text-muted-foreground text-sm">
+              No confirmed payments yet. Send SOL to your vault to see data
+              here.
+            </div>
+          ) : (
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="sol"
+                    stroke="#9945ff"
+                    fill="#9945ff33"
+                    name="SOL"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="usdc"
+                    stroke="#10b981"
+                    fill="#10b98133"
+                    name="USDC"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="usdt"
+                    stroke="#14b8a6"
+                    fill="#14b8a633"
+                    name="USDT"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </div>
 
-        {/* Recent Payments */}
-        <div className="glass-card rounded-xl p-6 animate-slide-up">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Recent Payments</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left text-muted-foreground">
-                  <th className="pb-3 font-medium">ID</th>
-                  <th className="pb-3 font-medium">Amount</th>
-                  <th className="pb-3 font-medium">Token</th>
-                  <th className="pb-3 font-medium">Status</th>
-                  <th className="pb-3 font-medium hidden sm:table-cell">Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockPayments.slice(0, 5).map((p) => (
-                  <tr key={p.id} className="border-b border-border/50">
-                    <td className="py-3 font-mono text-xs text-foreground">{p.id}</td>
-                    <td className="py-3 text-foreground">${p.amount.toFixed(2)}</td>
-                    <td className="py-3">
-                      <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">{p.token}</span>
-                    </td>
-                    <td className="py-3">
-                      <span className={`rounded-full px-2 py-0.5 text-xs ${
-                        p.status === "confirmed" ? "bg-primary/10 text-primary" :
-                        p.status === "pending" ? "bg-warning/10 text-warning" :
-                        "bg-destructive/10 text-destructive"
-                      }`}>{p.status}</span>
-                    </td>
-                    <td className="py-3 text-muted-foreground hidden sm:table-cell text-xs">
-                      {new Date(p.timestamp).toLocaleString()}
-                    </td>
+        {/* ── Recent Payments ── */}
+        <div className="rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-semibold">Recent Payments</h2>
+
+          {payments.length === 0 ? (
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              No payments recorded yet. Use the POS terminal or share your vault
+              address to receive payments.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left text-muted-foreground">
+                    <th className="pb-3">ID</th>
+                    <th className="pb-3">Amount</th>
+                    <th className="pb-3">Token</th>
+                    <th className="pb-3">Status</th>
+                    <th className="pb-3 hidden sm:table-cell">Time</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {payments.slice(0, 10).map((p) => (
+                    <tr key={p._id} className="border-b">
+                      <td className="py-3 font-mono text-xs">{p.paymentId}</td>
+                      <td className="py-3 font-medium">
+                        {p.amount.toFixed(6)} {p.token}
+                      </td>
+                      <td className="py-3">
+                        <span className="rounded-full bg-secondary px-2 py-0.5 text-xs">
+                          {p.token}
+                        </span>
+                      </td>
+                      <td className="py-3">
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                            p.status === "confirmed"
+                              ? "bg-green-100 text-green-600"
+                              : p.status === "pending"
+                                ? "bg-yellow-100 text-yellow-600"
+                                : "bg-red-100 text-red-600"
+                          }`}
+                        >
+                          {p.status}
+                        </span>
+                      </td>
+                      <td className="py-3 hidden sm:table-cell text-xs text-muted-foreground">
+                        {new Date(p.createdAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
 
