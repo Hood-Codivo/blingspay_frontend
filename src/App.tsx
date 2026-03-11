@@ -13,19 +13,16 @@ import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import CheckoutPreview from "./pages/CheckoutPreview";
 import NotFound from "./pages/NotFound";
+import Doc from "./pages/Doc";
 
 import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import {
-  WalletModalProvider,
-  WalletMultiButton,
-} from "@solana/wallet-adapter-react-ui";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
-import Navbar from "./components/Navbar";
 
 import { MerchantProvider } from "./contexts/MerchantContext";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -79,6 +76,7 @@ const App = () => (
                     path="/checkout-preview"
                     element={<CheckoutPreview />}
                   />
+                  <Route path="/docs" element={<Doc />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </MerchantProvider>

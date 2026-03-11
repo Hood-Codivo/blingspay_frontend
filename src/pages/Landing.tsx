@@ -80,6 +80,13 @@ export default function Landing() {
   }, []);
 
   const { publicKey } = useWallet();
+  const primaryCtaPath = publicKey ? "/dashboard" : "/onboarding";
+  const primaryCtaLabel = publicKey
+    ? "Go to Dashboard"
+    : "Start Accepting Payments";
+  const secondaryCtaLabel = publicKey
+    ? "Go to Dashboard"
+    : "Create Merchant Account";
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
@@ -145,7 +152,7 @@ export default function Landing() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed"
         >
-          A plug-and-play checkout for Solana. Drop in a component, accept SOL &
+          A plug-and-play checkout for crypto. Drop in a component, accept SOL &
           stablecoins, and get instant settlement — no blockchain knowledge
           required.
         </motion.p>
@@ -156,12 +163,12 @@ export default function Landing() {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <Link to="/onboarding">
+          <Link to={primaryCtaPath}>
             <Button
               size="lg"
               className="gap-2 text-base px-8 h-12 glow-primary"
             >
-              Start Accepting Payments <ArrowRight className="h-4 w-4" />
+              {primaryCtaLabel} <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
           <Link to="/checkout-preview">
@@ -306,12 +313,12 @@ export default function Landing() {
             Set up your merchant vault in under 5 minutes. No blockchain
             expertise needed.
           </p>
-          <Link to="/onboarding" className="relative inline-block mt-8">
+          <Link to={primaryCtaPath} className="relative inline-block mt-8">
             <Button
               size="lg"
               className="gap-2 px-10 h-12 text-base glow-primary"
             >
-              Create Merchant Account <ArrowRight className="h-4 w-4" />
+              {secondaryCtaLabel} <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </motion.div>
@@ -324,7 +331,7 @@ export default function Landing() {
             <Zap className="h-4 w-4 text-primary" />
             <Link to="/">
               <span className="text-sm font-semibold text-foreground cursor-pointer">
-                Vault<span className="text-primary">Pay</span>
+                Blings<span className="text-primary">Pay</span>
               </span>
             </Link>
           </div>

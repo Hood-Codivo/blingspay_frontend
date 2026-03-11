@@ -18,9 +18,8 @@ const Navbar = () => {
         className="flex items-center justify-between px-6 py-5 lg:px-16"
       >
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-            <Zap className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary"></div>
+          <Zap className="h-4 w-4 text-primary-foreground" />
           <Link to="/">
             <span className="text-xl font-bold text-foreground tracking-tight">
               Blings<span className="text-primary">Pay</span>
@@ -28,6 +27,10 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex justify-end p-4 gap-3">
+          <Link to="/docs">
+            <Button variant="ghost">Docs</Button>
+          </Link>
+
           {publicKey && isMerchant && (
             <Link to="/dashboard">
               <Button variant="ghost">Dashboard</Button>
