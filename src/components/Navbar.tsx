@@ -15,35 +15,40 @@ const Navbar = () => {
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex items-center justify-between px-6 py-5 lg:px-16"
+        className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5 lg:px-16"
       >
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary"></div>
-          <Zap className="h-4 w-4 text-primary-foreground" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
+            <Zap className="h-4 w-4 text-primary-foreground" />
+          </div>
           <Link to="/">
             <span className="text-xl font-bold text-foreground tracking-tight">
               Blings<span className="text-primary">Pay</span>
             </span>
           </Link>
         </div>
-        <div className="flex justify-end p-4 gap-3">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
           <Link to="/docs">
-            <Button variant="ghost">Docs</Button>
+            <Button variant="ghost" className="w-full sm:w-auto">
+              Docs
+            </Button>
           </Link>
 
           {publicKey && isMerchant && (
             <Link to="/dashboard">
-              <Button variant="ghost">Dashboard</Button>
+              <Button variant="ghost" className="w-full sm:w-auto">
+                Dashboard
+              </Button>
             </Link>
           )}
 
           {publicKey && !isMerchant && (
             <Link to="/onboarding">
-              <Button>Create Merchant</Button>
+              <Button className="w-full sm:w-auto">Create Merchant</Button>
             </Link>
           )}
 
-          <WalletMultiButton className="!bg-primary !text-primary-foreground !rounded-xl !h-9" />
+          <WalletMultiButton className="!h-9 !rounded-xl !bg-primary !text-primary-foreground" />
         </div>
       </motion.nav>
     </div>

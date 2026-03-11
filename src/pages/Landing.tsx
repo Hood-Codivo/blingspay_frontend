@@ -326,7 +326,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-border/50 px-6 py-8">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary" />
             <Link to="/">
