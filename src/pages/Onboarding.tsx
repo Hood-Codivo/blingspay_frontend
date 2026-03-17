@@ -208,16 +208,18 @@ export default function Onboarding() {
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center gap-2 px-6 py-5 lg:px-16">
-        <img
-          src="/images/blingspay_logo_mint_green.png"
-          alt="BlingsPay logo"
-          className="h-9 w-9 rounded-xl object-cover"
-        />
-        <Link to="/">
-          <span className="text-xl font-bold text-foreground tracking-tight cursor-pointer">
-            Blings<span className="text-primary">Pay</span>
-          </span>
-        </Link>
+        <div className="relative z-20 flex items-center gap-2">
+          <img
+            src="/images/blingspay_logo_mint_green.png"
+            alt="BlingsPay logo"
+            className="h-9 w-9 rounded-xl object-cover"
+          />
+          <Link to="/">
+            <span className="text-xl font-bold text-foreground tracking-tight cursor-pointer">
+              Blings<span className="text-primary">Pay</span>
+            </span>
+          </Link>
+        </div>
       </nav>
 
       {/* Main */}

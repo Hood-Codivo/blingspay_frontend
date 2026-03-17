@@ -358,7 +358,7 @@ export default function BlingspayDocs() {
       {/* ── Top nav ── */}
       <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-black/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="relative z-30 flex items-center gap-3">
             <img
               src="/images/blingspay_logo_mint_green.png"
               alt="BlingsPay logo"

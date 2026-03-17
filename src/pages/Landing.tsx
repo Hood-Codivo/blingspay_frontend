@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import Navbar from "@/components/Navbar";
+import { useMerchant } from "@/contexts/MerchantContext";
 
 const floatingOrbs = [
   { size: 300, x: "10%", y: "20%", color: "hsl(160, 84%, 39%)", delay: 0 },
@@ -79,11 +80,14 @@ export default function Landing() {
   }, []);
 
   const { publicKey } = useWallet();
-  const primaryCtaPath = publicKey ? "/dashboard" : "/onboarding";
-  const primaryCtaLabel = publicKey
+  const { isMerchant } = useMerchant();
+
+  const isMerchantUser = publicKey && isMerchant;
+  const primaryCtaPath = isMerchantUser ? "/dashboard" : "/onboarding";
+  const primaryCtaLabel = isMerchantUser
     ? "Go to Dashboard"
     : "Start Accepting Payments";
-  const secondaryCtaLabel = publicKey
+  const secondaryCtaLabel = isMerchantUser
     ? "Go to Dashboard"
     : "Create Merchant Account";
 

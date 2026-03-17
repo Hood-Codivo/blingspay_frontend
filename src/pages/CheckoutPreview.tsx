@@ -45,7 +45,7 @@ export default function CheckoutPreview() {
     <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="flex items-center justify-between border-b border-border/50 px-6 py-4 lg:px-16">
-        <div className="flex items-center gap-2">
+        <div className="relative z-20 flex items-center gap-2">
           <img
             src="/images/blingspay_logo_mint_green.png"
             alt="BlingsPay logo"

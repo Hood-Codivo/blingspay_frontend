@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center gap-2 border-b border-border px-6">
+        <div className="relative z-20 flex h-16 items-center gap-2 border-b border-border px-6">
           <img
             src="/images/blingspay_logo_mint_green.png"
             alt="BlingsPay logo"

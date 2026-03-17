@@ -14,30 +14,33 @@ const Navbar = () => {
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5 lg:px-16"
+        className="relative z-20 flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5 lg:px-16"
       >
-        <div className="flex items-center gap-2">
+        <div className="relative z-30 flex items-center gap-2">
           <img
             src="/images/blingspay_logo_mint_green.png"
             alt="BlingsPay logo"
             className="h-9 w-9 rounded-xl object-cover"
           />
           <Link to="/">
-            <span className="text-xl font-bold text-foreground tracking-tight">
+            <span className="hidden text-xl font-bold text-foreground tracking-tight sm:inline">
               Blings<span className="text-primary">Pay</span>
             </span>
           </Link>
         </div>
-        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2 sm:gap-3">
           <Link to="/docs">
-            <Button variant="ghost" className="w-full sm:w-auto">
+            <Button variant="ghost" className="sm:w-auto">
               Docs
             </Button>
           </Link>
 
           {publicKey && isMerchant && (
             <Link to="/dashboard">
-              <Button variant="ghost" className="w-full sm:w-auto">
+              <Button
+                variant="ghost"
+                className="h-8 px-3 text-sm sm:h-9 sm:w-auto sm:px-4"
+              >
                 Dashboard
               </Button>
             </Link>
@@ -45,7 +48,9 @@ const Navbar = () => {
 
           {publicKey && !isMerchant && (
             <Link to="/onboarding">
-              <Button className="w-full sm:w-auto">Create Merchant</Button>
+              <Button className="h-8 px-3 text-sm sm:h-9 sm:w-auto sm:px-4">
+                Create Merchant
+              </Button>
             </Link>
           )}
 
