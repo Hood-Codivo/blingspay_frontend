@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Zap, Check, Loader2, Wallet, ArrowRight } from "lucide-react";
+import { Check, Loader2, Wallet, ArrowRight } from "lucide-react";
 
 interface CheckoutModalProps {
   open: boolean;
@@ -53,9 +53,11 @@ export default function CheckoutModal({
       <DialogContent className="glass-card border-border/50 sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
-              <Zap className="h-3.5 w-3.5 text-primary-foreground" />
-            </div>
+            <img
+              src="/images/blingspay_logo_mint_green.png"
+              alt="BlingsPay logo"
+              className="h-7 w-7 rounded-lg object-cover"
+            />
             BlingsPay Checkout
           </DialogTitle>
         </DialogHeader>

@@ -9,7 +9,6 @@ import {
   Monitor,
   Menu,
   X,
-  Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -42,9 +41,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         }`}
       >
         <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Zap className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img
+            src="/images/blingspay_logo_mint_green.png"
+            alt="BlingsPay logo"
+            className="h-8 w-8 rounded-lg object-cover"
+          />
           <Link to="/">
             <span className="text-lg font-bold text-foreground tracking-tight c">
               Blings<span className="text-primary">Pay</span>

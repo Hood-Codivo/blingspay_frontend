@@ -1,6 +1,5 @@
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { motion } from "framer-motion";
-import { Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -18,9 +17,11 @@ const Navbar = () => {
         className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5 lg:px-16"
       >
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-            <Zap className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img
+            src="/images/blingspay_logo_mint_green.png"
+            alt="BlingsPay logo"
+            className="h-9 w-9 rounded-xl object-cover"
+          />
           <Link to="/">
             <span className="text-xl font-bold text-foreground tracking-tight">
               Blings<span className="text-primary">Pay</span>

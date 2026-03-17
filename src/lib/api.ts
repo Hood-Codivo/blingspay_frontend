@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseURL = import.meta.env.PROD
   ? import.meta.env.VITE_API_BASE_URL_PROD
-  : "https://blingspay-backend.onrender.com/api";
+  : "http://localhost:8000/api";
 
 const api = axios.create({
   baseURL,

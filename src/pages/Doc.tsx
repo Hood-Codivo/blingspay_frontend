@@ -1,4 +1,3 @@
-import { Zap } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
@@ -360,9 +359,11 @@ export default function BlingspayDocs() {
       <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-black/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-sm font-bold">
-              <Zap className="h-4 w-4 text-primary-foreground" />
-            </div>
+            <img
+              src="/images/blingspay_logo_mint_green.png"
+              alt="BlingsPay logo"
+              className="w-7 h-7 rounded-lg object-cover"
+            />
             <Link to="/">
               <span className="font-bold text-white text-base tracking-tight">
                 BlingsPay
