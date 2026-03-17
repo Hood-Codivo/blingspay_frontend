@@ -9,7 +9,6 @@ import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { getProgram } from "@/lib/anchor";
 import api from "@/lib/api";
 import {
-  Zap,
   ArrowRight,
   ArrowLeft,
   Building2,
@@ -209,12 +208,14 @@ export default function Onboarding() {
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center gap-2 px-6 py-5 lg:px-16">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-          <Zap className="h-4 w-4 text-primary-foreground" />
-        </div>
+        <img
+          src="/images/blingspay_logo_mint_green.png"
+          alt="BlingsPay logo"
+          className="h-9 w-9 rounded-xl object-cover"
+        />
         <Link to="/">
           <span className="text-xl font-bold text-foreground tracking-tight cursor-pointer">
-            Vault<span className="text-primary">Pay</span>
+            Blings<span className="text-primary">Pay</span>
           </span>
         </Link>
       </nav>

@@ -49,7 +49,7 @@ const Navbar = () => {
             </Link>
           )}
 
-          <WalletMultiButton className="!h-9 !rounded-xl !bg-primary !text-primary-foreground" />
+          <WalletMultiButton className="!h-9 !rounded-xl !border-0 !bg-gradient-to-r !from-primary !to-accent !text-primary-foreground hover:!brightness-105" />
         </div>
       </motion.nav>
     </div>

@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import HeroParticles from "@/components/HeroParticles";
 import {
-  Zap,
   ArrowRight,
   Shield,
   Globe,
@@ -128,12 +127,7 @@ export default function Landing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           className="mb-6"
-        >
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            Built on the Blockchain
-          </span>
-        </motion.div>
+        ></motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -234,7 +228,7 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      {/* Stats bar */}
+      {/* Stats bar
       <section className="relative z-10 border-y border-border/50 bg-card/30 backdrop-blur-sm">
         <div className="mx-auto grid max-w-5xl grid-cols-2 gap-8 px-6 py-12 sm:grid-cols-4">
           {stats.map((s, i) => (
@@ -251,7 +245,7 @@ export default function Landing() {
             </motion.div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Features */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 py-24">
@@ -328,7 +322,11 @@ export default function Landing() {
       <footer className="relative z-10 border-t border-border/50 px-6 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-primary" />
+            <img
+              src="/images/blingspay_logo_mint_green.png"
+              alt="BlingsPay logo"
+              className="h-4 w-4 rounded object-cover"
+            />
             <Link to="/">
               <span className="text-sm font-semibold text-foreground cursor-pointer">
                 Blings<span className="text-primary">Pay</span>

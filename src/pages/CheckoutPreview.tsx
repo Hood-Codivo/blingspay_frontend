@@ -46,9 +46,11 @@ export default function CheckoutPreview() {
       {/* Nav */}
       <nav className="flex items-center justify-between border-b border-border/50 px-6 py-4 lg:px-16">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-            <Zap className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img
+            src="/images/blingspay_logo_mint_green.png"
+            alt="BlingsPay logo"
+            className="h-9 w-9 rounded-xl object-cover"
+          />
           <span className="text-xl font-bold text-foreground tracking-tight">
             Blings<span className="text-primary">Pay</span>
           </span>
